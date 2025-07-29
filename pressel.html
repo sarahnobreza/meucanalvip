@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Redirecionando...</title>
+  <style>
+    body {
+      background-color: #FFFFFF;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .loading {
+      animation: rotate 1s linear infinite;
+      border: 5px solid #F3F3F3;
+      border-top: 5px solid #3498DB;
+      border-radius: 50%;
+      height: 50px;
+      width: 50px;
+      margin: 20px auto;
+    }
+    @keyframes rotate {
+      0% {
+        transform: rotate(0);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+    h1 {
+      text-align: center;
+      margin-top: 50px;
+      font-size: 24px;
+    }
+  </style>
+  <script>
+    // Função para redirecionar para um grupo de WhatsApp aleatório
+    function redirecionar() {
+      var grupos = [
+        'https://wa.me/556182089864?text=Oi%2C%20quero%20ver%20seus%20conteudos', // Grupo 1
+        'https://wa.me/556182089864?text=Oi%2C%20quero%20ver%20seus%20conteudos', // Grupo 2
+        'https://wa.me/556182089864?text=Oi%2C%20quero%20ver%20seus%20conteudos' // Grupo 3
+      ];
+      var grupoAleatorio = grupos[Math.floor(Math.random() * grupos.length)];
+      window.location.href = grupoAleatorio;
+    }
+    // Função para enviar o evento de PageView para o Facebook
+    function enviarPixel() {
+      fbq('track', 'PageView');
+    }
+  </script>
+  <!-- Pixel do Facebook -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '709730758431546');
+    fbq('track', 'PageView');
+  </script>
+</head>
+<body onload="setTimeout(redirecionar, 5000); enviarPixel();">
+  <div class="loading"></div>
+  <h1>Aguarde alguns segundos, vou liberar o que prometi para você...</h1>
+</body>
+</html>
