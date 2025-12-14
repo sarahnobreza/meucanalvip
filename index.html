@@ -1,77 +1,241 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Redirecionando...</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Acesse Agora — Sarah</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Preconnects úteis -->
+  <link rel="preconnect" href="https://connect.facebook.net" crossorigin>
+  <link rel="preconnect" href="https://s3.meucanalvip.org" crossorigin>
+
   <style>
-    body {
-      background-color: #FFFFFF;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    .loading {
-      animation: rotate 1s linear infinite;
-      border: 5px solid #F3F3F3;
-      border-top: 5px solid #3498DB;
-      border-radius: 50%;
-      height: 50px;
-      width: 50px;
-      margin: 20px auto;
-    }
-    @keyframes rotate {
-      0% {
-        transform: rotate(0);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-    h1 {
-      text-align: center;
-      margin-top: 50px;
-      font-size: 24px;
-    }
+    :root{--glass-bg: rgba(0,0,0,0.45);}
+    html,body,#root{height:100%}
+    body { font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:#000; color:#fff; }
+    .video-bg { position:fixed; inset:0; z-index:-2; object-fit:cover; width:100%; height:100%; }
+    .overlay { position:fixed; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.6)); z-index:-1; }
+    /* Slight focus styles */
+    button:focus { outline: 3px solid rgba(255,255,255,0.12); outline-offset: 2px; }
   </style>
+
+  <!-- Meta Pixel (único ID) -->
   <script>
-    // Função para redirecionar para um grupo de WhatsApp aleatório
-    function redirecionar() {
-      var grupos = [
-        'https://wa.me/559399730120?text=Quero%20minha%20consulta%20gratis', // Grupo 1
-        'https://wa.me/559399730120?text=Quero%20minha%20consulta%20gratis', // Grupo 2
-      
-        
-        
-      ];
-      var grupoAleatorio = grupos[Math.floor(Math.random() * grupos.length)];
-      window.location.href = grupoAleatorio;
-    }
-    // Função para enviar o evento de PageView para o Facebook
-    function enviarPixel() {
-      fbq('track', 'PageView');
-    }
-  </script>
-  <!-- Pixel do Facebook -->
-  <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1494194411799270');
+    !function(f,b,e,v,n,t,s){
+      if(f.fbq) return; n=f.fbq=function(){ n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments) };
+      if(!f._fbq) f._fbq=n; n.push=n; n.loaded=!0; n.version='2.0';
+      n.queue=[]; t=b.createElement(e); t.async=!0;
+      t.src=v; s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s);
+    }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+
+    // Inicializa apenas com o pixel solicitado
+    fbq('init', '1219620626848870');
     fbq('track', 'PageView');
   </script>
 </head>
-<body onload="setTimeout(redirecionar, 5000); enviarPixel();">
-  <div class="loading"></div>
-  <h1>Aguarde alguns segundos, vou liberar sua consulta gratis...</h1>
+<body class="antialiased">
+
+  <!-- Vídeo de fundo (mesmo link) -->
+  <video autoplay loop muted playsinline class="video-bg" aria-hidden="true">
+    <source src="https://s3.meucanalvip.org/sarinhaperfeita/fundopresell.mp4" type="video/mp4">
+    Seu navegador não suporta vídeo.
+  </video>
+  <div class="overlay"></div>
+
+  <main class="relative min-h-screen flex items-center justify-center p-6">
+    <div class="w-full max-w-md mx-auto">
+      <!-- Card com glassmorphism -->
+      <div class="relative bg-[var(--glass-bg)] backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden border border-white/6 p-6 pt-20">
+        <!-- Avatar -->
+        <div class="absolute -top-12 left-1/2 transform -translate-x-1/2">
+          <img id="avatar" src="https://s3.meucanalvip.org/sarinhaperfeita/fotopresell.jpeg" alt="Sarah" class="w-28 h-28 rounded-full border-4 border-white/20 shadow-lg object-cover">
+        </div>
+
+        <!-- Status -->
+        <div class="text-center mt-2">
+          <div class="inline-flex items-center gap-2">
+            <span class="relative flex h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-60"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+            </span>
+            <span class="text-sm font-medium text-green-300">Sarah está online...</span>
+          </div>
+        </div>
+
+        <!-- Question area -->
+        <div id="quiz-content" class="mt-4 text-center">
+          <p id="question-text" class="text-xl font-semibold min-h-[84px] flex items-center justify-center px-3">
+            <!-- spinner inicial -->
+            <svg class="animate-spin h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+          </p>
+
+          <!-- Buttons -->
+          <div class="mt-3 grid grid-cols-2 gap-3 px-4">
+            <button id="no-btn" class="py-3 px-4 rounded-lg bg-white/10 hover:bg-white/20 transition transform hover:scale-[1.02] font-semibold">Não</button>
+            <button id="yes-btn" class="py-3 px-4 rounded-lg bg-gradient-to-r from-pink-500 to-orange-400 shadow-md hover:brightness-95 transition transform hover:scale-[1.02] font-semibold">Sim</button>
+          </div>
+
+          <!-- Localização -->
+          <div id="location-info" class="mt-4 text-xs text-white/70 px-3 text-center"></div>
+        </div>
+
+        <!-- Redirect view (hidden initially) -->
+        <div id="redirect-view" class="hidden text-center mt-6">
+          <svg class="animate-spin h-12 w-12 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          <p id="redirect-text" class="mt-4 text-lg font-medium">Redirecionando você para o WhatsApp...</p>
+          <p id="countdown" class="mt-2 text-sm text-white/70">5</p>
+        </div>
+
+      </div>
+
+      <!-- small footer / trust -->
+      <div class="text-center mt-4 text-xs text-white/50">
+        Conteúdo privado · Acesso via WhatsApp · Privacidade garantida
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Quiz data (mantive o mesmo conteúdo)
+    const quizData = [
+      {
+        question: "Sarah está online agora, vamos conversar no WhatsApp?",
+        avatar: "https://s3.meucanalvip.org/sarinhaperfeita/fotopresell2.jpeg"
+      },
+      {
+        question: "Eu realmente respondo, mas não gosto de perder tempo atoa. Você vai me dar atenção?",
+        avatar: "https://s3.meucanalvip.org/sarinhaperfeita/fotopresell2.jpeg"
+      },
+      {
+        question: "Eu quero te mostrar umas coisinhas 🔞😈, posso? 😏",
+        avatar: "https://s3.meucanalvip.org/sarinhaperfeita/fotopresell2.jpeg"
+      }
+    ];
+
+    const messages = [
+      'Oi quero ver seus conteudos', 'Oi gata quero ver seus conteudos',
+      'Oi gatinha quero ver seus conteudos', 'Oi anjo quero ver seus conteudos',
+      'Oi me mostra seus conteudos', 'Oi tudo bem?', 'Oi vamos conversar?',
+      'Oi tudo joia?', 'Oi tudo bom?', 'Oi quero comprar seus conteudos',
+      'Oi podemos conversar?', 'Oi quero te conhecer'
+    ];
+
+    // Elements
+    const questionText = document.getElementById('question-text');
+    const avatarImg = document.getElementById('avatar');
+    const yesBtn = document.getElementById('yes-btn');
+    const noBtn = document.getElementById('no-btn');
+    const locationInfo = document.getElementById('location-info');
+    const quizContent = document.getElementById('quiz-content');
+    const redirectView = document.getElementById('redirect-view');
+    const redirectText = document.getElementById('redirect-text');
+    const countdownEl = document.getElementById('countdown');
+
+    let currentQuestionIndex = 0;
+    let redirectTimeout = null;
+    let countdownInterval = null;
+
+    function showQuestion(index){
+      const q = quizData[index];
+      questionText.textContent = q.question;
+      avatarImg.src = q.avatar;
+      avatarImg.alt = `Avatar pergunta ${index+1}`;
+    }
+
+    function startRedirectSequence(){
+      // Oculta quiz, mostra redirect
+      quizContent.classList.add('hidden');
+      redirectView.classList.remove('hidden');
+
+      // Contagem regressiva de 5 segundos
+      let seconds = 5;
+      countdownEl.textContent = seconds;
+      redirectText.textContent = 'Redirecionando você...';
+
+      countdownInterval = setInterval(() => {
+        seconds--;
+        if(seconds > 0){
+          countdownEl.textContent = seconds;
+        } else {
+          clearInterval(countdownInterval);
+          countdownEl.textContent = '0';
+          redirectText.textContent = 'Redirecionando agora...';
+        }
+      }, 1000);
+
+      // Mensagem aleatória e URL do WhatsApp
+      const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+      const phone = '559399730120'; // número atual — altere se necessário
+      const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(randomMessage)}`;
+
+      // Aguarda 5s antes de redirecionar
+      redirectTimeout = setTimeout(() => {
+        // Aqui você pode disparar event custom se quiser:
+        // fbq('track', 'Contact'); // opcional
+        window.location.href = waUrl;
+      }, 5000);
+    }
+
+    function handleAnswer(){
+      if (currentQuestionIndex === quizData.length - 1){
+        startRedirectSequence();
+        return;
+      }
+      // animação simples
+      const container = document.querySelector('.relative.bg-[var(--glass-bg)]');
+      container.classList.add('opacity-0', 'scale-95');
+      setTimeout(() => {
+        currentQuestionIndex++;
+        showQuestion(currentQuestionIndex);
+        container.classList.remove('opacity-0', 'scale-95');
+      }, 350);
+    }
+
+    yesBtn.addEventListener('click', handleAnswer);
+    noBtn.addEventListener('click', handleAnswer);
+
+    // On load: injetar localização fake e mostrar primeira pergunta
+    window.addEventListener('load', () => {
+      // localização simulada: entre 5 e 31 km
+      const minKm = 5, maxKm = 31;
+      const randomKm = Math.floor(Math.random() * (maxKm - minKm + 1)) + minKm;
+      locationInfo.textContent = `📍Perto de você! Na sua região, a somente ${randomKm} km disponível para conversar`;
+
+      // show first question
+      showQuestion(currentQuestionIndex);
+
+      // Fade in
+      const card = document.querySelector('.relative.bg-[var(--glass-bg)]');
+      card.classList.add('transition-all', 'duration-400');
+      setTimeout(() => { card.classList.remove('opacity-0'); }, 50);
+    });
+
+    // Optional: stop redirect if user navigates away (cleanup)
+    window.addEventListener('beforeunload', () => {
+      if (redirectTimeout) clearTimeout(redirectTimeout);
+      if (countdownInterval) clearInterval(countdownInterval);
+    });
+  </script>
 </body>
 </html>
+
+
 
 
 
