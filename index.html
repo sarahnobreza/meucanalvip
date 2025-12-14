@@ -2,199 +2,309 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Acesse Agora — Sarah</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Sarah — Conversa Privada</title>
 
-  <!-- Tailwind CDN -->
+  <!-- Tailwind (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
-  <!-- Preconnects úteis -->
-  <link rel="preconnect" href="https://connect.facebook.net" crossorigin>
-  <link rel="preconnect" href="https://s3.meucanalvip.org" crossorigin>
+  <!-- preload small assets for perceived speed -->
+  <link rel="preload" as="image" href="https://s3.meucanalvip.org/sarinhaperfeita/fotopresell.jpeg">
 
   <style>
-    :root{--glass-bg: rgba(0,0,0,0.45);}
+    :root{
+      --glass: rgba(0,0,0,0.48);
+      --accent-from: #ff4d9d;
+      --accent-to: #ff8a3d;
+    }
     html,body{height:100%}
-    body { font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:#000; color:#fff; margin:0; }
-    .video-bg { position:fixed; inset:0; z-index:-2; object-fit:cover; width:100%; height:100%; }
-    .overlay { position:fixed; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.6)); z-index:-1; }
-    button:focus { outline: 3px solid rgba(255,255,255,0.12); outline-offset: 2px; }
+    body{
+      margin:0;
+      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:#000;
+      color:#fff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* video background */
+    .video-bg{ position:fixed; inset:0; z-index:-10; width:100%; height:100%; object-fit:cover; }
+    .overlay{ position:fixed; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.64)); z-index:-5; }
+
+    /* mobile-first: show main content only on small screens */
+    .desktop-block{ display:none; }
+
+    /* the impactful mobile card */
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px;
+      padding: 20px;
+    }
+
+    .pulse-cta {
+      animation: pulse 1.6s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,100,150,0.28); }
+      70% { transform: scale(1.02); box-shadow: 0 10px 30px 0 rgba(255,100,150,0.06); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,100,150,0.0); }
+    }
+
+    /* social counter animation */
+    .counter { transition: transform .4s ease; }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .pulse-cta { animation: none; transform: none; }
+      .video-bg { display:none; }
+      body { background-image:url('https://s3.meucanalvip.org/sarinhaperfeita/fotopresell.jpeg'); background-size:cover; background-position:center; }
+    }
+
+    /* Desktop: show message to open on mobile */
+    @media (min-width: 769px) {
+      .mobile-only { display:none !important; }
+      .desktop-block { display:block; }
+      .desktop-center { min-height:100vh; display:flex; align-items:center; justify-content:center; gap:20px; padding:24px; }
+    }
   </style>
 
-  <!-- Meta Pixel (único ID) -->
+  <!-- Meta Pixel -->
   <script>
     !function(f,b,e,v,n,t,s){
       if(f.fbq) return; n=f.fbq=function(){ n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments) };
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
       if(!f._fbq) f._fbq=n; n.push=n; n.loaded=!0; n.version='2.0';
       n.queue=[]; t=b.createElement(e); t.async=!0;
       t.src=v; s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s);
-    }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
-
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '1219620626848870');
     fbq('track', 'PageView');
   </script>
 </head>
 <body class="antialiased">
 
-  <!-- Vídeo de fundo (mesmo link) -->
-  <video autoplay loop muted playsinline class="video-bg" aria-hidden="true">
+  <!-- Video background (mobile-first, muted playsinline) -->
+  <video class="video-bg" autoplay loop muted playsinline preload="metadata" poster="https://s3.meucanalvip.org/sarinhaperfeita/fotopresell.jpeg" aria-hidden="true">
     <source src="https://s3.meucanalvip.org/sarinhaperfeita/fundopresell.mp4" type="video/mp4">
-    Seu navegador não suporta vídeo.
+    <!-- optional webm: <source src="...webm" type="video/webm"> -->
   </video>
-  <div class="overlay"></div>
+  <div class="overlay" aria-hidden="true"></div>
 
-  <main class="relative min-h-screen flex items-center justify-center p-6">
-    <div class="w-full max-w-md mx-auto">
-      <!-- Card com glassmorphism -->
-      <div class="relative bg-[var(--glass-bg)] backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden border border-white/6 p-6 pt-20">
-        <!-- Avatar -->
-        <div class="absolute -top-12 left-1/2 transform -translate-x-1/2">
-          <img id="avatar" src="https://s3.meucanalvip.org/sarinhaperfeita/fotopresell.jpeg" alt="Sarah" class="w-28 h-28 rounded-full border-4 border-white/20 shadow-lg object-cover">
+  <!-- Mobile content (visible on small screens) -->
+  <main class="mobile-only min-h-screen flex items-center justify-center p-6">
+    <div class="w-full max-w-lg mx-auto">
+
+      <!-- Impact header -->
+      <section class="text-center mb-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/6 mx-auto">
+          <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse block"></span>
+          <span class="text-xs font-semibold text-green-200">Ao vivo</span>
         </div>
+        <h1 class="mt-4 text-3xl font-extrabold leading-tight">Sarah está disponível agora</h1>
+        <p class="mt-2 text-sm text-white/80">Conversa privada via WhatsApp — clique em <strong>SIM</strong> para abrir</p>
+      </section>
 
-        <!-- Status -->
-        <div class="text-center mt-2">
-          <div class="inline-flex items-center gap-2">
-            <span class="relative flex h-3 w-3" aria-hidden="true">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-60"></span>
-              <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-            </span>
-            <span class="text-sm font-medium text-green-300">Sarah está online...</span>
+      <!-- Card -->
+      <div class="card">
+        <div class="flex items-center gap-4">
+          <img src="https://s3.meucanalvip.org/sarinhaperfeita/fotopresell.jpeg" alt="Sarah" class="w-20 h-20 rounded-full border-2 border-white/10 object-cover shadow-lg" loading="lazy" decoding="async">
+          <div>
+            <div class="text-sm text-white/80">Olá — sou a Sarah</div>
+            <div class="mt-1 text-lg font-semibold">Pronta pra conversar</div>
+            <div class="mt-2 text-xs text-white/70">Privacidade garantida · Respostas reais</div>
           </div>
         </div>
 
-        <!-- Mensagem curta -->
-        <div class="mt-6 text-center px-4">
-          <p class="text-xl font-semibold">Sarah quer conversar com você no WhatsApp. Clique em <strong>SIM</strong> para abrir a conversa.</p>
-        </div>
-
-        <!-- Botão SIM (único) -->
-        <div class="mt-6 px-4">
-          <!-- Link fallback (será atualizado pelo script para o primeiro número da lista) -->
-          <a id="wa-link-fallback" href="#" class="hidden" rel="noopener noreferrer">Abrir WhatsApp</a>
-
-          <button id="sim-btn" class="w-full py-4 rounded-lg bg-gradient-to-r from-pink-500 to-orange-400 shadow-md hover:brightness-95 transition transform hover:scale-[1.02] font-semibold" type="button" aria-label="Sim, abrir WhatsApp">
-            SIM
+        <!-- Big CTA + social proof -->
+        <div class="mt-6">
+          <button id="sim-btn" class="w-full py-4 rounded-xl font-extrabold text-lg shadow-xl pulse-cta" style="background:linear-gradient(90deg,var(--accent-from),var(--accent-to)); border:none;">
+            SIM — Abrir conversa
           </button>
+
+          <div class="mt-4 flex items-center justify-between text-xs text-white/70">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 11.5c1.38 0 2.5-1.12 2.5-2.5S13.38 6.5 12 6.5 9.5 7.62 9.5 9s1.12 2.5 2.5 2.5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span id="counter" class="counter font-semibold">...</span>
+              <span>conversas hoje</span>
+            </div>
+            <div class="text-right">
+              <div class="font-medium">Vagas limitadas</div>
+              <div class="text-xs text-white/60">Reserve sua vez</div>
+            </div>
+          </div>
         </div>
 
-        <!-- Redirect view (aparece enquanto redireciona) -->
-        <div id="redirect-view" class="hidden text-center mt-6">
-          <svg class="animate-spin h-12 w-12 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-          </svg>
-          <p id="redirect-text" class="mt-4 text-lg font-medium">Abrindo conversa no WhatsApp...</p>
+        <!-- micro trust -->
+        <div class="mt-5 text-center text-xs text-white/60">
+          Pagamento & dados por WhatsApp · Sem cadastro
         </div>
       </div>
 
-      <!-- small footer / trust -->
-      <div class="text-center mt-4 text-xs text-white/50">
-        Conteúdo privado · Acesso via WhatsApp · Privacidade garantida
+      <!-- small footer CTA -->
+      <div class="mt-6 text-center text-xs text-white/60">
+        Ao clicar você será direcionado ao WhatsApp — responda a mensagem automática ou aguarde atendimento.
       </div>
     </div>
   </main>
 
+  <!-- Desktop block: request to open on mobile + QR for convenience -->
+  <div class="desktop-block desktop-center min-h-screen bg-black/80 text-white p-6">
+    <div class="max-w-2xl w-full card p-8 text-center">
+      <h2 class="text-2xl font-bold mb-3">Abra esta página no seu celular</h2>
+      <p class="mb-4 text-sm text-white/70">Esse conteúdo é otimizado para celular. Escaneie o QR ou copie o link abaixo e abra no seu telefone.</p>
+
+      <div id="qr-container" class="mb-4 inline-block bg-white/5 p-4 rounded-lg">
+        <!-- QR gerada dinamicamente via Google Chart API -->
+        <img id="qr-img" alt="QR para abrir no celular" src="" width="160" height="160" style="display:block;margin:auto;border-radius:8px;" />
+      </div>
+
+      <div class="flex gap-2 items-center justify-center">
+        <input id="desktop-link" readonly class="px-3 py-2 rounded-lg text-sm bg-white/5 w-80" />
+        <button id="copy-btn" class="px-3 py-2 rounded-lg bg-gradient-to-r from-pink-500 to-orange-400 text-sm font-semibold">Copiar</button>
+      </div>
+
+      <div class="mt-4 text-xs text-white/60">OU: acesse no celular via <strong>https://wa.me/557799179768</strong></div>
+    </div>
+  </div>
+
+  <!-- JS -->
   <script>
-    /**
-     * CONFIGURAÇÃO
-     * - whatsappList: array de objetos { number: '55XXXXXXXXXXX', weight: n }
-     *   number -> deve ter o DDI (ex: 55) e estar sem sinais
-     *   weight -> (opcional) número que define a porcentagem relativa de tráfego para esse número
-     */
+    /***********************
+     * Configuration
+     ***********************/
     const whatsappList = [
-      { number: '557799179768', weight: 1 }, // número que você enviou (77...)
-      { number: '559399730120', weight: 1 }, // seu outro número
-      //{ number: '5511999999999', weight: 0.5 }, // exemplo de como reduzir o peso
+      { number: '557799179768', weight: 1 }, // principal
+      { number: '559399730120', weight: 1 }  // secundário
     ];
-
-    // Mensagem fixa desejada
     const fixedMessage = 'Quero ver seus conteudos';
+    const pixelTimeoutMs = 300; // wait time for fbq('track','Lead')
 
-    // Elementos
-    const simBtn = document.getElementById('sim-btn');
-    const redirectView = document.getElementById('redirect-view');
-    const waLinkFallback = document.getElementById('wa-link-fallback');
-
-    // Atualiza link fallback com o primeiro número (bom para SEO / caso JS esteja off)
-    if (whatsappList.length > 0) {
-      const first = whatsappList[0].number;
-      waLinkFallback.href = `https://wa.me/${first}?text=${encodeURIComponent(fixedMessage)}`;
-      waLinkFallback.classList.remove('hidden');
-      // Opcional: esconder se quiser que somente JS lide com o clique
-      waLinkFallback.classList.add('hidden');
-    }
-
-    // Função: escolhe um índice baseado em pesos
+    /***********************
+     * Utility functions
+     ***********************/
     function weightedRandomIndex(list) {
-      // Se nenhum peso presente, trata como pesos iguais
-      const weights = list.map(item => (typeof item.weight === 'number' && item.weight > 0) ? item.weight : 1);
+      if (!Array.isArray(list) || list.length === 0) return 0;
+      const weights = list.map(i => (typeof i.weight === 'number' && i.weight > 0) ? i.weight : 1);
       const total = weights.reduce((a,b) => a + b, 0);
       const r = Math.random() * total;
       let acc = 0;
-      for (let i = 0; i < weights.length; i++) {
+      for (let i=0; i<weights.length; i++) {
         acc += weights[i];
         if (r <= acc) return i;
       }
-      return 0; // fallback
+      return 0;
     }
 
-    // Função que realiza o redirecionamento (chamada ao clicar)
-    function redirectToRandomWhatsApp() {
-      // UI feedback
+    function buildWAUrl(number) {
+      return `https://wa.me/${number}?text=${encodeURIComponent(fixedMessage)}`;
+    }
+
+    /***********************
+     * Mobile CTA behavior
+     ***********************/
+    const simBtn = document.getElementById('sim-btn');
+    const redirectText = document.getElementById('redirect-text'); // may be null on mobile since not present
+    const counterEl = document.getElementById('counter');
+
+    // Social proof: random counter animation (for urgency/cred)
+    (function animateCounter() {
+      const min = 900, max = 2600;
+      const target = Math.floor(Math.random() * (max - min + 1)) + min;
+      let current = Math.floor(target * 0.2);
+      counterEl.textContent = current;
+      const step = Math.max(1, Math.round((target - current) / 30));
+      const iv = setInterval(() => {
+        current += step;
+        if (current >= target) { current = target; clearInterval(iv); }
+        counterEl.textContent = current.toLocaleString('pt-BR');
+      }, 40);
+    })();
+
+    function redirectToRandomWhatsapp() {
+      // UI lock
       simBtn.disabled = true;
       simBtn.textContent = 'Abrindo...';
-      redirectView.classList.remove('hidden');
 
-      // Seleção randomizada (com peso)
       const idx = weightedRandomIndex(whatsappList);
       const phone = whatsappList[idx].number;
-      const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(fixedMessage)}`;
+      const waUrl = buildWAUrl(phone);
 
-      // Tenta disparar evento de conversão antes do redirect
+      // try to fire Lead event then redirect
       try {
         if (typeof fbq === 'function') {
-          // envia Lead, depois redireciona em 250ms para dar chance de envio
           fbq('track', 'Lead');
           setTimeout(() => {
             window.location.href = waUrl;
-          }, 250);
+          }, pixelTimeoutMs);
         } else {
-          // se pixel não carregou, redireciona direto
           window.location.href = waUrl;
         }
       } catch (err) {
-        // Se houver erro, redireciona direto
-        console.warn('Erro ao tentar disparar fbq:', err);
+        console.warn('fbq error', err);
         window.location.href = waUrl;
       }
     }
 
-    // Eventos
-    simBtn.addEventListener('click', redirectToRandomWhatsApp);
+    if (simBtn) {
+      simBtn.addEventListener('click', redirectToRandomWhatsapp);
+      simBtn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); simBtn.click(); }
+      });
+    }
 
-    // Acessibilidade: permitir Enter/Space disparar o botão
-    simBtn.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        simBtn.click();
+    /***********************
+     * Desktop QR & copy helpers
+     ***********************/
+    (function setupDesktopHelpers() {
+      const desktopLinkInput = document.getElementById('desktop-link');
+      const copyBtn = document.getElementById('copy-btn');
+      const qrImg = document.getElementById('qr-img');
+
+      // choose primary WA number for desktop QR (first in list)
+      const primary = whatsappList.length ? whatsappList[0].number : '557799179768';
+      const waUrl = buildWAUrl(primary);
+
+      if (desktopLinkInput) desktopLinkInput.value = waUrl;
+
+      // Google Chart API for QR codes (simple, free)
+      if (qrImg) {
+        const qrSrc = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(waUrl)}&choe=UTF-8`;
+        qrImg.src = qrSrc;
       }
-    });
 
-    // Cleanup se usuário navegar antes tempo
-    window.addEventListener('beforeunload', () => {
-      // nada complexo aqui, apenas proteção futura
-    });
+      if (copyBtn && desktopLinkInput) {
+        copyBtn.addEventListener('click', () => {
+          desktopLinkInput.select();
+          desktopLinkInput.setSelectionRange(0, 99999);
+          try {
+            document.execCommand('copy');
+            copyBtn.textContent = 'Copiado!';
+            setTimeout(() => copyBtn.textContent = 'Copiar', 1500);
+          } catch (e) {
+            copyBtn.textContent = 'Copiar link';
+          }
+        });
+      }
+    })();
+
+    /***********************
+     * Final notes
+     ***********************/
+    // This page is mobile-first — desktop users see a helpful QR / copy link to open on mobile.
+    // If you want weights like 60/30/10, change each object's weight property accordingly (e.g. weight: 6, 3, 1).
+    // Consider adding server-side Conversions API (CAPI) later for more reliable tracking.
   </script>
 </body>
 </html>
+
 
 
 
