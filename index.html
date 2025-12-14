@@ -57,8 +57,20 @@
       100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,100,150,0.0); }
     }
 
-    /* social counter animation */
-    .counter { transition: transform .4s ease; }
+    /* small spots bounce */
+    .spots {
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:rgba(0,0,0,0.35);
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.04);
+      font-weight:600;
+      color:#fff;
+      font-size:13px;
+    }
+    .spots .num { color:#fff; font-weight:800; }
 
     /* Respect reduced motion */
     @media (prefers-reduced-motion: reduce) {
@@ -94,7 +106,6 @@
   <!-- Video background (mobile-first, muted playsinline) -->
   <video class="video-bg" autoplay loop muted playsinline preload="metadata" poster="https://s3.meucanalvip.org/sarinhaperfeita/fotopresell.jpeg" aria-hidden="true">
     <source src="https://s3.meucanalvip.org/sarinhaperfeita/fundopresell.mp4" type="video/mp4">
-    <!-- optional webm: <source src="...webm" type="video/webm"> -->
   </video>
   <div class="overlay" aria-hidden="true"></div>
 
@@ -123,7 +134,7 @@
           </div>
         </div>
 
-        <!-- Big CTA + social proof -->
+        <!-- Big CTA + exclusivity spot -->
         <div class="mt-6">
           <button id="sim-btn" class="w-full py-4 rounded-xl font-extrabold text-lg shadow-xl pulse-cta" style="background:linear-gradient(90deg,var(--accent-from),var(--accent-to)); border:none;">
             SIM — Abrir conversa
@@ -131,9 +142,13 @@
 
           <div class="mt-4 flex items-center justify-between text-xs text-white/70">
             <div class="flex items-center gap-2">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 11.5c1.38 0 2.5-1.12 2.5-2.5S13.38 6.5 12 6.5 9.5 7.62 9.5 9s1.12 2.5 2.5 2.5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span id="counter" class="counter font-semibold">...</span>
-              <span>conversas hoje</span>
+              <!-- Exclusivity spot replaces big counter -->
+              <div id="spots" class="spots" aria-live="polite">
+                <span class="dot" aria-hidden="true">🔒</span>
+                <span class="num">3</span>
+                <span class="label">vagas</span>
+              </div>
+              <span class="text-xs text-white/60 ml-2">Exclusivo — reserve sua vez</span>
             </div>
             <div class="text-right">
               <div class="font-medium">Vagas limitadas</div>
@@ -162,7 +177,6 @@
       <p class="mb-4 text-sm text-white/70">Esse conteúdo é otimizado para celular. Escaneie o QR ou copie o link abaixo e abra no seu telefone.</p>
 
       <div id="qr-container" class="mb-4 inline-block bg-white/5 p-4 rounded-lg">
-        <!-- QR gerada dinamicamente via Google Chart API -->
         <img id="qr-img" alt="QR para abrir no celular" src="" width="160" height="160" style="display:block;margin:auto;border-radius:8px;" />
       </div>
 
@@ -181,8 +195,8 @@
      * Configuration
      ***********************/
     const whatsappList = [
-      { number: '557799179768', weight: 1 }, // principal
-      { number: '557799179768', weight: 1 }  // secundário
+      { number: '557799179768', weight: 1 },
+      { number: '559399730120', weight: 1 }
     ];
     const fixedMessage = 'Quero ver seus conteudos';
     const pixelTimeoutMs = 300; // wait time for fbq('track','Lead')
@@ -202,34 +216,42 @@
       }
       return 0;
     }
-
     function buildWAUrl(number) {
       return `https://wa.me/${number}?text=${encodeURIComponent(fixedMessage)}`;
     }
 
     /***********************
+     * Exclusivity spots logic
+     * - starts with random small number (1-5)
+     * - slowly decrements to 1 to create urgency
+     ***********************/
+    const spotsEl = document.getElementById('spots');
+    function initSpots() {
+      if (!spotsEl) return;
+      let spots = Math.floor(Math.random() * 5) + 1; // 1..5
+      // Prefer starting 2-4 for better effect
+      if (spots === 1) spots = 3;
+      const numEl = spotsEl.querySelector('.num');
+      if (numEl) numEl.textContent = spots;
+
+      // decrement occasionally until 1
+      const decInterval = setInterval(() => {
+        if (spots > 1) {
+          spots--;
+          if (numEl) numEl.textContent = spots;
+        } else {
+          clearInterval(decInterval);
+        }
+      }, 7000 + Math.floor(Math.random()*6000)); // every 7-13s
+    }
+    initSpots();
+
+    /***********************
      * Mobile CTA behavior
      ***********************/
     const simBtn = document.getElementById('sim-btn');
-    const redirectText = document.getElementById('redirect-text'); // may be null on mobile since not present
-    const counterEl = document.getElementById('counter');
-
-    // Social proof: random counter animation (for urgency/cred)
-    (function animateCounter() {
-      const min = 900, max = 2600;
-      const target = Math.floor(Math.random() * (max - min + 1)) + min;
-      let current = Math.floor(target * 0.2);
-      counterEl.textContent = current;
-      const step = Math.max(1, Math.round((target - current) / 30));
-      const iv = setInterval(() => {
-        current += step;
-        if (current >= target) { current = target; clearInterval(iv); }
-        counterEl.textContent = current.toLocaleString('pt-BR');
-      }, 40);
-    })();
 
     function redirectToRandomWhatsapp() {
-      // UI lock
       simBtn.disabled = true;
       simBtn.textContent = 'Abrindo...';
 
@@ -237,7 +259,6 @@
       const phone = whatsappList[idx].number;
       const waUrl = buildWAUrl(phone);
 
-      // try to fire Lead event then redirect
       try {
         if (typeof fbq === 'function') {
           fbq('track', 'Lead');
@@ -268,13 +289,11 @@
       const copyBtn = document.getElementById('copy-btn');
       const qrImg = document.getElementById('qr-img');
 
-      // choose primary WA number for desktop QR (first in list)
       const primary = whatsappList.length ? whatsappList[0].number : '557799179768';
       const waUrl = buildWAUrl(primary);
 
       if (desktopLinkInput) desktopLinkInput.value = waUrl;
 
-      // Google Chart API for QR codes (simple, free)
       if (qrImg) {
         const qrSrc = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(waUrl)}&choe=UTF-8`;
         qrImg.src = qrSrc;
@@ -296,14 +315,15 @@
     })();
 
     /***********************
-     * Final notes
+     * Notes
      ***********************/
-    // This page is mobile-first — desktop users see a helpful QR / copy link to open on mobile.
-    // If you want weights like 60/30/10, change each object's weight property accordingly (e.g. weight: 6, 3, 1).
-    // Consider adding server-side Conversions API (CAPI) later for more reliable tracking.
+    // If you prefer no dynamic decrement (static exclusivity), set initSpots to assign a fixed small number.
+    // For transparency: avoid claiming impossible exclusivity; small numbers (1-5) usually create urgency without seeming fake.
   </script>
 </body>
 </html>
+
+
 
 
 
