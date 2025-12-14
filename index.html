@@ -77,15 +77,15 @@
 
         <!-- Botão SIM (único) -->
         <div class="mt-6 px-4">
-          <!-- Também deixei um link fallback para casos sem JS -->
-          <a id="wa-link-fallback" href="https://wa.me/559399730120" class="hidden" rel="noopener noreferrer">Abrir WhatsApp</a>
+          <!-- Link fallback (será atualizado pelo script para o primeiro número da lista) -->
+          <a id="wa-link-fallback" href="#" class="hidden" rel="noopener noreferrer">Abrir WhatsApp</a>
 
           <button id="sim-btn" class="w-full py-4 rounded-lg bg-gradient-to-r from-pink-500 to-orange-400 shadow-md hover:brightness-95 transition transform hover:scale-[1.02] font-semibold" type="button" aria-label="Sim, abrir WhatsApp">
             SIM
           </button>
         </div>
 
-        <!-- Redirect view (aparece por 5s antes de enviar) -->
+        <!-- Redirect view (aparece enquanto redireciona) -->
         <div id="redirect-view" class="hidden text-center mt-6">
           <svg class="animate-spin h-12 w-12 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -103,33 +103,82 @@
   </main>
 
   <script>
-    // Número do WhatsApp (ajuste aqui se precisar)
-    const phoneNumber = '559399730120';
-    const messages = [
-      'Oi quero ver seus conteudos', 'Oi gata quero ver seus conteudos',
-      'Oi gatinha quero ver seus conteudos', 'Oi anjo quero ver seus conteudos',
-      'Oi me mostra seus conteudos', 'Oi tudo bem?', 'Oi vamos conversar?'
+    /**
+     * CONFIGURAÇÃO
+     * - whatsappList: array de objetos { number: '55XXXXXXXXXXX', weight: n }
+     *   number -> deve ter o DDI (ex: 55) e estar sem sinais
+     *   weight -> (opcional) número que define a porcentagem relativa de tráfego para esse número
+     */
+    const whatsappList = [
+      { number: '557799179768', weight: 1 }, // número que você enviou (77...)
+      { number: '559399730120', weight: 1 }, // seu outro número
+      //{ number: '5511999999999', weight: 0.5 }, // exemplo de como reduzir o peso
     ];
 
+    // Mensagem fixa desejada
+    const fixedMessage = 'Quero ver seus conteudos';
+
+    // Elementos
     const simBtn = document.getElementById('sim-btn');
     const redirectView = document.getElementById('redirect-view');
+    const waLinkFallback = document.getElementById('wa-link-fallback');
 
-    simBtn.addEventListener('click', () => {
-      // Mostra feedback imediato
+    // Atualiza link fallback com o primeiro número (bom para SEO / caso JS esteja off)
+    if (whatsappList.length > 0) {
+      const first = whatsappList[0].number;
+      waLinkFallback.href = `https://wa.me/${first}?text=${encodeURIComponent(fixedMessage)}`;
+      waLinkFallback.classList.remove('hidden');
+      // Opcional: esconder se quiser que somente JS lide com o clique
+      waLinkFallback.classList.add('hidden');
+    }
+
+    // Função: escolhe um índice baseado em pesos
+    function weightedRandomIndex(list) {
+      // Se nenhum peso presente, trata como pesos iguais
+      const weights = list.map(item => (typeof item.weight === 'number' && item.weight > 0) ? item.weight : 1);
+      const total = weights.reduce((a,b) => a + b, 0);
+      const r = Math.random() * total;
+      let acc = 0;
+      for (let i = 0; i < weights.length; i++) {
+        acc += weights[i];
+        if (r <= acc) return i;
+      }
+      return 0; // fallback
+    }
+
+    // Função que realiza o redirecionamento (chamada ao clicar)
+    function redirectToRandomWhatsApp() {
+      // UI feedback
       simBtn.disabled = true;
       simBtn.textContent = 'Abrindo...';
       redirectView.classList.remove('hidden');
 
-      // Mensagem aleatória
-      const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-      const waUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(randomMessage)}`;
+      // Seleção randomizada (com peso)
+      const idx = weightedRandomIndex(whatsappList);
+      const phone = whatsappList[idx].number;
+      const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(fixedMessage)}`;
 
-      // Opcional: track custom event antes do redirect (descomente se quiser)
-      // fbq('track', 'Contact');
+      // Tenta disparar evento de conversão antes do redirect
+      try {
+        if (typeof fbq === 'function') {
+          // envia Lead, depois redireciona em 250ms para dar chance de envio
+          fbq('track', 'Lead');
+          setTimeout(() => {
+            window.location.href = waUrl;
+          }, 250);
+        } else {
+          // se pixel não carregou, redireciona direto
+          window.location.href = waUrl;
+        }
+      } catch (err) {
+        // Se houver erro, redireciona direto
+        console.warn('Erro ao tentar disparar fbq:', err);
+        window.location.href = waUrl;
+      }
+    }
 
-      // Redireciona imediatamente
-      window.location.href = waUrl;
-    });
+    // Eventos
+    simBtn.addEventListener('click', redirectToRandomWhatsApp);
 
     // Acessibilidade: permitir Enter/Space disparar o botão
     simBtn.addEventListener('keydown', (e) => {
@@ -138,9 +187,16 @@
         simBtn.click();
       }
     });
+
+    // Cleanup se usuário navegar antes tempo
+    window.addEventListener('beforeunload', () => {
+      // nada complexo aqui, apenas proteção futura
+    });
   </script>
 </body>
 </html>
+
+
 
 
 
