@@ -19,11 +19,10 @@
 
   <style>
     :root{--glass-bg: rgba(0,0,0,0.45);}
-    html,body,#root{height:100%}
-    body { font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:#000; color:#fff; }
+    html,body{height:100%}
+    body { font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:#000; color:#fff; margin:0; }
     .video-bg { position:fixed; inset:0; z-index:-2; object-fit:cover; width:100%; height:100%; }
     .overlay { position:fixed; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.6)); z-index:-1; }
-    /* Slight focus styles */
     button:focus { outline: 3px solid rgba(255,255,255,0.12); outline-offset: 2px; }
   </style>
 
@@ -38,7 +37,6 @@
       s.parentNode.insertBefore(t,s);
     }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
 
-    // Inicializa apenas com o pixel solicitado
     fbq('init', '1219620626848870');
     fbq('track', 'PageView');
   </script>
@@ -64,7 +62,7 @@
         <!-- Status -->
         <div class="text-center mt-2">
           <div class="inline-flex items-center gap-2">
-            <span class="relative flex h-3 w-3">
+            <span class="relative flex h-3 w-3" aria-hidden="true">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-60"></span>
               <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
             </span>
@@ -72,36 +70,29 @@
           </div>
         </div>
 
-        <!-- Question area -->
-        <div id="quiz-content" class="mt-4 text-center">
-          <p id="question-text" class="text-xl font-semibold min-h-[84px] flex items-center justify-center px-3">
-            <!-- spinner inicial -->
-            <svg class="animate-spin h-8 w-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-            </svg>
-          </p>
-
-          <!-- Buttons -->
-          <div class="mt-3 grid grid-cols-2 gap-3 px-4">
-            <button id="no-btn" class="py-3 px-4 rounded-lg bg-white/10 hover:bg-white/20 transition transform hover:scale-[1.02] font-semibold">Não</button>
-            <button id="yes-btn" class="py-3 px-4 rounded-lg bg-gradient-to-r from-pink-500 to-orange-400 shadow-md hover:brightness-95 transition transform hover:scale-[1.02] font-semibold">Sim</button>
-          </div>
-
-          <!-- Localização -->
-          <div id="location-info" class="mt-4 text-xs text-white/70 px-3 text-center"></div>
+        <!-- Mensagem curta -->
+        <div class="mt-6 text-center px-4">
+          <p class="text-xl font-semibold">Sarah quer conversar com você no WhatsApp. Clique em <strong>SIM</strong> para abrir a conversa.</p>
         </div>
 
-        <!-- Redirect view (hidden initially) -->
+        <!-- Botão SIM (único) -->
+        <div class="mt-6 px-4">
+          <!-- Também deixei um link fallback para casos sem JS -->
+          <a id="wa-link-fallback" href="https://wa.me/559399730120" class="hidden" rel="noopener noreferrer">Abrir WhatsApp</a>
+
+          <button id="sim-btn" class="w-full py-4 rounded-lg bg-gradient-to-r from-pink-500 to-orange-400 shadow-md hover:brightness-95 transition transform hover:scale-[1.02] font-semibold" type="button" aria-label="Sim, abrir WhatsApp">
+            SIM
+          </button>
+        </div>
+
+        <!-- Redirect view (aparece por 5s antes de enviar) -->
         <div id="redirect-view" class="hidden text-center mt-6">
           <svg class="animate-spin h-12 w-12 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
           </svg>
-          <p id="redirect-text" class="mt-4 text-lg font-medium">Redirecionando você para o WhatsApp...</p>
-          <p id="countdown" class="mt-2 text-sm text-white/70">5</p>
+          <p id="redirect-text" class="mt-4 text-lg font-medium">Abrindo conversa no WhatsApp...</p>
         </div>
-
       </div>
 
       <!-- small footer / trust -->
@@ -112,128 +103,46 @@
   </main>
 
   <script>
-    // Quiz data (mantive o mesmo conteúdo)
-    const quizData = [
-      {
-        question: "Sarah está online agora, vamos conversar no WhatsApp?",
-        avatar: "https://s3.meucanalvip.org/sarinhaperfeita/fotopresell2.jpeg"
-      },
-      {
-        question: "Eu realmente respondo, mas não gosto de perder tempo atoa. Você vai me dar atenção?",
-        avatar: "https://s3.meucanalvip.org/sarinhaperfeita/fotopresell2.jpeg"
-      },
-      {
-        question: "Eu quero te mostrar umas coisinhas 🔞😈, posso? 😏",
-        avatar: "https://s3.meucanalvip.org/sarinhaperfeita/fotopresell2.jpeg"
-      }
-    ];
-
+    // Número do WhatsApp (ajuste aqui se precisar)
+    const phoneNumber = '559399730120';
     const messages = [
       'Oi quero ver seus conteudos', 'Oi gata quero ver seus conteudos',
       'Oi gatinha quero ver seus conteudos', 'Oi anjo quero ver seus conteudos',
-      'Oi me mostra seus conteudos', 'Oi tudo bem?', 'Oi vamos conversar?',
-      'Oi tudo joia?', 'Oi tudo bom?', 'Oi quero comprar seus conteudos',
-      'Oi podemos conversar?', 'Oi quero te conhecer'
+      'Oi me mostra seus conteudos', 'Oi tudo bem?', 'Oi vamos conversar?'
     ];
 
-    // Elements
-    const questionText = document.getElementById('question-text');
-    const avatarImg = document.getElementById('avatar');
-    const yesBtn = document.getElementById('yes-btn');
-    const noBtn = document.getElementById('no-btn');
-    const locationInfo = document.getElementById('location-info');
-    const quizContent = document.getElementById('quiz-content');
+    const simBtn = document.getElementById('sim-btn');
     const redirectView = document.getElementById('redirect-view');
-    const redirectText = document.getElementById('redirect-text');
-    const countdownEl = document.getElementById('countdown');
 
-    let currentQuestionIndex = 0;
-    let redirectTimeout = null;
-    let countdownInterval = null;
-
-    function showQuestion(index){
-      const q = quizData[index];
-      questionText.textContent = q.question;
-      avatarImg.src = q.avatar;
-      avatarImg.alt = `Avatar pergunta ${index+1}`;
-    }
-
-    function startRedirectSequence(){
-      // Oculta quiz, mostra redirect
-      quizContent.classList.add('hidden');
+    simBtn.addEventListener('click', () => {
+      // Mostra feedback imediato
+      simBtn.disabled = true;
+      simBtn.textContent = 'Abrindo...';
       redirectView.classList.remove('hidden');
 
-      // Contagem regressiva de 5 segundos
-      let seconds = 5;
-      countdownEl.textContent = seconds;
-      redirectText.textContent = 'Redirecionando você...';
-
-      countdownInterval = setInterval(() => {
-        seconds--;
-        if(seconds > 0){
-          countdownEl.textContent = seconds;
-        } else {
-          clearInterval(countdownInterval);
-          countdownEl.textContent = '0';
-          redirectText.textContent = 'Redirecionando agora...';
-        }
-      }, 1000);
-
-      // Mensagem aleatória e URL do WhatsApp
+      // Mensagem aleatória
       const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-      const phone = '559399730120'; // número atual — altere se necessário
-      const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(randomMessage)}`;
+      const waUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(randomMessage)}`;
 
-      // Aguarda 5s antes de redirecionar
-      redirectTimeout = setTimeout(() => {
-        // Aqui você pode disparar event custom se quiser:
-        // fbq('track', 'Contact'); // opcional
-        window.location.href = waUrl;
-      }, 5000);
-    }
+      // Opcional: track custom event antes do redirect (descomente se quiser)
+      // fbq('track', 'Contact');
 
-    function handleAnswer(){
-      if (currentQuestionIndex === quizData.length - 1){
-        startRedirectSequence();
-        return;
-      }
-      // animação simples
-      const container = document.querySelector('.relative.bg-[var(--glass-bg)]');
-      container.classList.add('opacity-0', 'scale-95');
-      setTimeout(() => {
-        currentQuestionIndex++;
-        showQuestion(currentQuestionIndex);
-        container.classList.remove('opacity-0', 'scale-95');
-      }, 350);
-    }
-
-    yesBtn.addEventListener('click', handleAnswer);
-    noBtn.addEventListener('click', handleAnswer);
-
-    // On load: injetar localização fake e mostrar primeira pergunta
-    window.addEventListener('load', () => {
-      // localização simulada: entre 5 e 31 km
-      const minKm = 5, maxKm = 31;
-      const randomKm = Math.floor(Math.random() * (maxKm - minKm + 1)) + minKm;
-      locationInfo.textContent = `📍Perto de você! Na sua região, a somente ${randomKm} km disponível para conversar`;
-
-      // show first question
-      showQuestion(currentQuestionIndex);
-
-      // Fade in
-      const card = document.querySelector('.relative.bg-[var(--glass-bg)]');
-      card.classList.add('transition-all', 'duration-400');
-      setTimeout(() => { card.classList.remove('opacity-0'); }, 50);
+      // Redireciona imediatamente
+      window.location.href = waUrl;
     });
 
-    // Optional: stop redirect if user navigates away (cleanup)
-    window.addEventListener('beforeunload', () => {
-      if (redirectTimeout) clearTimeout(redirectTimeout);
-      if (countdownInterval) clearInterval(countdownInterval);
+    // Acessibilidade: permitir Enter/Space disparar o botão
+    simBtn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        simBtn.click();
+      }
     });
   </script>
 </body>
 </html>
+
+
 
 
 
