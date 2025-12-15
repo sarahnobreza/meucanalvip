@@ -85,36 +85,6 @@
       .desktop-block { display:block; }
       .desktop-center { min-height:100vh; display:flex; align-items:center; justify-content:center; gap:20px; padding:24px; }
     }
-
-    /* Age modal styles */
-    #ageModal {
-      position:fixed;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:rgba(0,0,0,0.88);
-      z-index:60;
-      padding:20px;
-    }
-    #ageModal .box {
-      background:linear-gradient(180deg,#0b0b0c,#0f1113);
-      padding:20px;
-      border-radius:12px;
-      max-width:420px;
-      width:100%;
-      text-align:center;
-      border:1px solid rgba(255,255,255,0.04);
-    }
-    #ageModal h3{margin:0 0 8px 0;font-size:18px}
-    #ageModal p{margin:0 0 14px;color:#b9c3cc;font-size:14px}
-    #ageModal .row{display:flex;gap:8px;justify-content:center}
-    #ageModal button{padding:10px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
-    #ageModal .no{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff}
-    #ageModal .yes{background:linear-gradient(90deg,var(--accent-from),var(--accent-to));color:#fff}
-
-    /* small helper to visually hide content but keep it in DOM (used for accessibility toggles) */
-    .aria-hidden { pointer-events: none; user-select: none; filter: blur(1px); }
   </style>
 
   <!-- Meta Pixel -->
@@ -127,25 +97,11 @@
       t.src=v; s=b.getElementsByTagName(e)[0];
       s.parentNode.insertBefore(t,s)}(window, document,'script',
       'https://connect.facebook.net/en_US/fbevents.js');
-
-    // Pixel principal
     fbq('init', '709730758431546');
     fbq('track', 'PageView');
   </script>
 </head>
 <body class="antialiased">
-
-  <!-- Age gate (accessibility + focus-trap implemented) -->
-  <div id="ageModal" aria-hidden="false" role="dialog" aria-modal="true" aria-labelledby="ageTitle">
-    <div class="box" role="document" aria-describedby="ageDesc">
-      <h3 id="ageTitle">Conteúdo para maiores de 18 anos</h3>
-      <p id="ageDesc">Este conteúdo é restrito a maiores de 18 anos. Clique em <strong>Sim, tenho 18+</strong> para continuar.</p>
-      <div class="row">
-        <button id="ageYes" class="yes" type="button">Sim, tenho 18+</button>
-        <button id="ageNo" class="no" type="button">Não, quero sair</button>
-      </div>
-    </div>
-  </div>
 
   <!-- Video background (mobile-first, muted playsinline) -->
   <video class="video-bg" autoplay loop muted playsinline preload="metadata" poster="https://s3.meucanalvip.org/sarinhaperfeita/fotopresell.jpeg" aria-hidden="true">
@@ -154,38 +110,35 @@
   <div class="overlay" aria-hidden="true"></div>
 
   <!-- Mobile content (visible on small screens) -->
-  <main id="mainContent" class="mobile-only min-h-screen flex items-center justify-center p-6" aria-labelledby="mainTitle" tabindex="-1">
+  <main class="mobile-only min-h-screen flex items-center justify-center p-6">
     <div class="w-full max-w-lg mx-auto">
 
       <!-- Impact header -->
       <section class="text-center mb-4">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/6 mx-auto">
-          <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse block" aria-hidden="true"></span>
+          <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse block"></span>
           <span class="text-xs font-semibold text-green-200">Ao vivo</span>
         </div>
-        <h1 id="mainTitle" class="mt-4 text-3xl font-extrabold leading-tight">Sarah está disponível agora</h1>
+        <h1 class="mt-4 text-3xl font-extrabold leading-tight">Sarah está disponível agora</h1>
         <p class="mt-2 text-sm text-white/80">Conversa privada via WhatsApp — clique em <strong>SIM</strong> para abrir</p>
       </section>
 
       <!-- Card -->
-      <div class="card" role="region" aria-label="Presell card">
+      <div class="card">
         <div class="flex items-center gap-4">
           <img src="https://s3.meucanalvip.org/sarinhaperfeita/fotopresell.jpeg" alt="Sarah" class="w-20 h-20 rounded-full border-2 border-white/10 object-cover shadow-lg" loading="lazy" decoding="async">
           <div>
             <div class="text-sm text-white/80">Olá — sou a Sarah</div>
-            <div class="mt-1 text-lg font-semibold">Respostas picantes e privadas</div>
+            <div class="mt-1 text-lg font-semibold">Pronta pra conversar</div>
             <div class="mt-2 text-xs text-white/70">Privacidade garantida · Respostas reais</div>
           </div>
         </div>
 
         <!-- Big CTA + exclusivity spot -->
         <div class="mt-6">
-          <button id="sim-btn" class="w-full py-4 rounded-xl font-extrabold text-lg shadow-xl pulse-cta" style="background:linear-gradient(90deg,var(--accent-from),var(--accent-to)); border:none;" aria-label="Abrir conversa no WhatsApp" aria-live="polite">
+          <button id="sim-btn" class="w-full py-4 rounded-xl font-extrabold text-lg shadow-xl pulse-cta" style="background:linear-gradient(90deg,var(--accent-from),var(--accent-to)); border:none;">
             SIM — Abrir conversa
           </button>
-
-          <!-- micro-copy under CTA -->
-          <div class="mt-2 text-center text-xs text-white/60">Clique uma vez — o WhatsApp será aberto. Se necessário, responda a mensagem automática.</div>
 
           <div class="mt-4 flex items-center justify-between text-xs text-white/70">
             <div class="flex items-center gap-2">
@@ -218,7 +171,7 @@
   </main>
 
   <!-- Desktop block: request to open on mobile + QR for convenience -->
-  <div class="desktop-block desktop-center min-h-screen bg-black/80 text-white p-6" aria-hidden="true">
+  <div class="desktop-block desktop-center min-h-screen bg-black/80 text-white p-6">
     <div class="max-w-2xl w-full card p-8 text-center">
       <h2 class="text-2xl font-bold mb-3">Abra esta página no seu celular</h2>
       <p class="mb-4 text-sm text-white/70">Esse conteúdo é otimizado para celular. Escaneie o QR ou copie o link abaixo e abra no seu telefone.</p>
@@ -239,17 +192,17 @@
   <!-- JS -->
   <script>
     /***********************
-     * Configuration (improved)
+     * Configuration
      ***********************/
     const whatsappList = [
+      { number: '557799179768', weight: 1 },
       { number: '557799179768', weight: 1 }
     ];
     const fixedMessage = 'Quero ver seus conteudos';
-    const pixelTimeoutMs = 600; // aumentado para garantir entrega do evento
-    const AGE_KEY = 'ageAccepted_v1';
+    const pixelTimeoutMs = 300; // wait time for fbq('track','Lead')
 
     /***********************
-     * Helper utilities
+     * Utility functions
      ***********************/
     function weightedRandomIndex(list) {
       if (!Array.isArray(list) || list.length === 0) return 0;
@@ -264,31 +217,112 @@
       return 0;
     }
     function buildWAUrl(number) {
-      return `https://wa.me/${number}?text=${encodeURIComponent(fixedMessage)}`;
+      return https://wa.me/${number}?text=${encodeURIComponent(fixedMessage)};
     }
 
     /***********************
-     * Age-gate: DOM-ready safe + focus trap
+     * Exclusivity spots logic
+     * - starts with random small number (1-5)
+     * - slowly decrements to 1 to create urgency
      ***********************/
-    document.addEventListener('DOMContentLoaded', () => {
-      const modal = document.getElementById('ageModal');
-      const ageYes = document.getElementById('ageYes');
-      const ageNo = document.getElementById('ageNo');
-      const main = document.getElementById('mainContent');
+    const spotsEl = document.getElementById('spots');
+    function initSpots() {
+      if (!spotsEl) return;
+      let spots = Math.floor(Math.random() * 5) + 1; // 1..5
+      // Prefer starting 2-4 for better effect
+      if (spots === 1) spots = 3;
+      const numEl = spotsEl.querySelector('.num');
+      if (numEl) numEl.textContent = spots;
 
-      // If no modal present, nothing to do
-      if (!modal || !ageYes || !ageNo || !main) {
-        // still setup desktop helpers below
-        setupDesktopHelpers();
-        return;
+      // decrement occasionally until 1
+      const decInterval = setInterval(() => {
+        if (spots > 1) {
+          spots--;
+          if (numEl) numEl.textContent = spots;
+        } else {
+          clearInterval(decInterval);
+        }
+      }, 7000 + Math.floor(Math.random()*6000)); // every 7-13s
+    }
+    initSpots();
+
+    /***********************
+     * Mobile CTA behavior
+     ***********************/
+    const simBtn = document.getElementById('sim-btn');
+
+    function redirectToRandomWhatsapp() {
+      simBtn.disabled = true;
+      simBtn.textContent = 'Abrindo...';
+
+      const idx = weightedRandomIndex(whatsappList);
+      const phone = whatsappList[idx].number;
+      const waUrl = buildWAUrl(phone);
+
+      try {
+        if (typeof fbq === 'function') {
+          fbq('track', 'Lead');
+          setTimeout(() => {
+            window.location.href = waUrl;
+          }, pixelTimeoutMs);
+        } else {
+          window.location.href = waUrl;
+        }
+      } catch (err) {
+        console.warn('fbq error', err);
+        window.location.href = waUrl;
+      }
+    }
+
+    if (simBtn) {
+      simBtn.addEventListener('click', redirectToRandomWhatsapp);
+      simBtn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); simBtn.click(); }
+      });
+    }
+
+    /***********************
+     * Desktop QR & copy helpers
+     ***********************/
+    (function setupDesktopHelpers() {
+      const desktopLinkInput = document.getElementById('desktop-link');
+      const copyBtn = document.getElementById('copy-btn');
+      const qrImg = document.getElementById('qr-img');
+
+      const primary = whatsappList.length ? whatsappList[0].number : '557799179768';
+      const waUrl = buildWAUrl(primary);
+
+      if (desktopLinkInput) desktopLinkInput.value = waUrl;
+
+      if (qrImg) {
+        const qrSrc = https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(waUrl)}&choe=UTF-8;
+        qrImg.src = qrSrc;
       }
 
-      // If user already accepted, remove modal immediately
-      try {
-        if (localStorage.getItem(AGE_KEY) === '1') {
-          modal.parentNode && modal.parentNode.removeChild(modal);
-          enableMain();
-          setu
+      if (copyBtn && desktopLinkInput) {
+        copyBtn.addEventListener('click', () => {
+          desktopLinkInput.select();
+          desktopLinkInput.setSelectionRange(0, 99999);
+          try {
+            document.execCommand('copy');
+            copyBtn.textContent = 'Copiado!';
+            setTimeout(() => copyBtn.textContent = 'Copiar', 1500);
+          } catch (e) {
+            copyBtn.textContent = 'Copiar link';
+          }
+        });
+      }
+    })();
+
+    /***********************
+     * Notes
+     ***********************/
+    // If you prefer no dynamic decrement (static exclusivity), set initSpots to assign a fixed small number.
+    // For transparency: avoid claiming impossible exclusivity; small numbers (1-5) usually create urgency without seeming fake.
+  </script>
+</body>
+</html>
+
 
 
 
