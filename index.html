@@ -86,7 +86,7 @@
       .desktop-center { min-height:100vh; display:flex; align-items:center; justify-content:center; gap:20px; padding:24px; }
     }
 
-    /* Age modal */
+    /* Age modal styles */
     #ageModal {
       position:fixed;
       inset:0;
@@ -112,6 +112,9 @@
     #ageModal button{padding:10px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:700}
     #ageModal .no{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#fff}
     #ageModal .yes{background:linear-gradient(90deg,var(--accent-from),var(--accent-to));color:#fff}
+
+    /* small helper to visually hide content but keep it in DOM (used for accessibility toggles) */
+    .aria-hidden { pointer-events: none; user-select: none; filter: blur(1px); }
   </style>
 
   <!-- Meta Pixel -->
@@ -132,14 +135,14 @@
 </head>
 <body class="antialiased">
 
-  <!-- Age gate (remembers choice) -->
-  <div id="ageModal" aria-hidden="false" role="dialog" aria-modal="true">
-    <div class="box" role="document" aria-labelledby="ageTitle">
+  <!-- Age gate (accessibility + focus-trap implemented) -->
+  <div id="ageModal" aria-hidden="false" role="dialog" aria-modal="true" aria-labelledby="ageTitle">
+    <div class="box" role="document" aria-describedby="ageDesc">
       <h3 id="ageTitle">Conteúdo para maiores de 18 anos</h3>
-      <p>Este conteúdo é restrito a maiores de 18 anos. Clique em <strong>Sim, tenho 18+</strong> para continuar.</p>
+      <p id="ageDesc">Este conteúdo é restrito a maiores de 18 anos. Clique em <strong>Sim, tenho 18+</strong> para continuar.</p>
       <div class="row">
-        <button id="ageYes" class="yes">Sim, tenho 18+</button>
-        <button id="ageNo" class="no">Não, quero sair</button>
+        <button id="ageYes" class="yes" type="button">Sim, tenho 18+</button>
+        <button id="ageNo" class="no" type="button">Não, quero sair</button>
       </div>
     </div>
   </div>
@@ -151,7 +154,7 @@
   <div class="overlay" aria-hidden="true"></div>
 
   <!-- Mobile content (visible on small screens) -->
-  <main class="mobile-only min-h-screen flex items-center justify-center p-6" aria-labelledby="mainTitle">
+  <main id="mainContent" class="mobile-only min-h-screen flex items-center justify-center p-6" aria-labelledby="mainTitle" tabindex="-1">
     <div class="w-full max-w-lg mx-auto">
 
       <!-- Impact header -->
@@ -215,7 +218,7 @@
   </main>
 
   <!-- Desktop block: request to open on mobile + QR for convenience -->
-  <div class="desktop-block desktop-center min-h-screen bg-black/80 text-white p-6">
+  <div class="desktop-block desktop-center min-h-screen bg-black/80 text-white p-6" aria-hidden="true">
     <div class="max-w-2xl w-full card p-8 text-center">
       <h2 class="text-2xl font-bold mb-3">Abra esta página no seu celular</h2>
       <p class="mb-4 text-sm text-white/70">Esse conteúdo é otimizado para celular. Escaneie o QR ou copie o link abaixo e abra no seu telefone.</p>
@@ -243,36 +246,10 @@
     ];
     const fixedMessage = 'Quero ver seus conteudos';
     const pixelTimeoutMs = 600; // aumentado para garantir entrega do evento
+    const AGE_KEY = 'ageAccepted_v1';
 
     /***********************
-     * Age-gate behavior
-     ***********************/
-    (function setupAgeGate() {
-      const modal = document.getElementById('ageModal');
-      const yes = document.getElementById('ageYes');
-      const no = document.getElementById('ageNo');
-
-      // If user already accepted before, hide modal
-      try {
-        const accepted = localStorage.getItem('ageAccepted');
-        if (accepted === '1') {
-          modal.remove();
-          return;
-        }
-      } catch(e){ /* ignore */ }
-
-      yes.addEventListener('click', () => {
-        try { localStorage.setItem('ageAccepted', '1'); } catch(e) {}
-        modal.remove();
-        document.querySelector('main')?.focus();
-      });
-      no.addEventListener('click', () => {
-        window.location.href = 'https://google.com';
-      });
-    })();
-
-    /***********************
-     * Utility functions
+     * Helper utilities
      ***********************/
     function weightedRandomIndex(list) {
       if (!Array.isArray(list) || list.length === 0) return 0;
@@ -291,45 +268,29 @@
     }
 
     /***********************
-     * Exclusivity spots logic
+     * Age-gate: DOM-ready safe + focus trap
      ***********************/
-    const spotsEl = document.getElementById('spots');
-    function initSpots() {
-      if (!spotsEl) return;
-      let spots = Math.floor(Math.random() * 5) + 1; // 1..5
-      if (spots === 1) spots = 3;
-      const numEl = spotsEl.querySelector('.num');
-      if (numEl) numEl.textContent = spots;
+    document.addEventListener('DOMContentLoaded', () => {
+      const modal = document.getElementById('ageModal');
+      const ageYes = document.getElementById('ageYes');
+      const ageNo = document.getElementById('ageNo');
+      const main = document.getElementById('mainContent');
 
-      const decInterval = setInterval(() => {
-        if (spots > 1) {
-          spots--;
-          if (numEl) numEl.textContent = spots;
-        } else {
-          clearInterval(decInterval);
-        }
-      }, 7000 + Math.floor(Math.random()*6000)); // every 7-13s
-    }
-    initSpots();
+      // If no modal present, nothing to do
+      if (!modal || !ageYes || !ageNo || !main) {
+        // still setup desktop helpers below
+        setupDesktopHelpers();
+        return;
+      }
 
-    /***********************
-     * Mobile CTA behavior (improved pixel logic)
-     ***********************/
-    const simBtn = document.getElementById('sim-btn');
-
-    function redirectToRandomWhatsapp() {
-      if (!simBtn) return;
-      simBtn.disabled = true;
-      simBtn.setAttribute('aria-busy', 'true');
-      simBtn.textContent = 'Abrindo...';
-
-      const idx = weightedRandomIndex(whatsappList);
-      const phone = whatsappList[idx].number;
-      const waUrl = buildWAUrl(phone);
-
+      // If user already accepted, remove modal immediately
       try {
-        if (typeof fbq === 'function') {
-          // Dispara Lead apenas
+        if (localStorage.getItem(AGE_KEY) === '1') {
+          modal.parentNode && modal.parentNode.removeChild(modal);
+          enableMain();
+          setu
+
+
 
 
 
