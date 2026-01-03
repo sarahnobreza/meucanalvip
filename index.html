@@ -32,8 +32,20 @@
       -moz-osx-font-smoothing:grayscale;
     }
 
-    /* video background */
-    .video-bg{ position:fixed; inset:0; z-index:-10; width:100%; height:100%; object-fit:cover; }
+    /* background image (replaces previous video) */
+    .video-bg{
+      position:fixed;
+      inset:0;
+      z-index:-10;
+      width:100%;
+      height:100%;
+      background-image: url('https://s3.meucanalvip.org/sarinhaperfeita/fotopresell.jpeg');
+      background-size:cover;
+      background-position:center;
+      transition: filter 1s ease, transform 14s linear;
+      will-change: filter, transform;
+    }
+    .video-bg.zoom { transform: scale(1.03); }
     .overlay{ position:fixed; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.64)); z-index:-5; }
 
     /* mobile-first: show main content only on small screens */
@@ -75,7 +87,8 @@
     /* Respect reduced motion */
     @media (prefers-reduced-motion: reduce) {
       .pulse-cta { animation: none; transform: none; }
-      .video-bg { display:none; }
+      /* show the static image already applied; no zoom */
+      .video-bg { transform: none; }
       body { background-image:url('https://s3.meucanalvip.org/sarinhaperfeita/fotopresell.jpeg'); background-size:cover; background-position:center; }
     }
 
@@ -103,10 +116,8 @@
 </head>
 <body class="antialiased">
 
-  <!-- Video background (mobile-first, muted playsinline) -->
-  <video class="video-bg" autoplay loop muted playsinline preload="metadata" poster="https://s3.meucanalvip.org/sarinhaperfeita/fotopresell.jpeg" aria-hidden="true">
-    <source src="https://s3.meucanalvip.org/sarinhaperfeita/fundopresell.mp4" type="video/mp4">
-  </video>
+  <!-- Image background (replaces the previous video element) -->
+  <div class="video-bg" id="bgImage" role="img" aria-label="Fundo com foto da modelo"></div>
   <div class="overlay" aria-hidden="true"></div>
 
   <!-- Mobile content (visible on small screens) -->
@@ -202,6 +213,17 @@
     const pixelTimeoutMs = 300; // wait time for fbq('track','Lead')
 
     /***********************
+     * small background nicety: apply zoom class after load
+     ***********************/
+    window.addEventListener('load', () => {
+      const bg = document.getElementById('bgImage');
+      // add a small zoom for a premium feel (reversed in reduced-motion)
+      if (bg && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setTimeout(() => bg.classList.add('zoom'), 300);
+      }
+    });
+
+    /***********************
      * Utility functions
      ***********************/
     function weightedRandomIndex(list) {
@@ -222,8 +244,6 @@
 
     /***********************
      * Exclusivity spots logic
-     * - starts with random small number (1-5)
-     * - slowly decrements to 1 to create urgency
      ***********************/
     const spotsEl = document.getElementById('spots');
     function initSpots() {
@@ -317,11 +337,13 @@
     /***********************
      * Notes
      ***********************/
-    // If you prefer no dynamic decrement (static exclusivity), set initSpots to assign a fixed small number.
-    // For transparency: avoid claiming impossible exclusivity; small numbers (1-5) usually create urgency without seeming fake.
+    // Substituí o <video> por uma imagem sólida para um tom mais pessoal.
+    // Se quiser uma imagem diferente (mais íntima/pessoal), me manda a URL e eu troco.
   </script>
 </body>
 </html>
+
+
 
 
 
