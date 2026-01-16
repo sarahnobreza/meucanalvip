@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Sarah — Conversa Privada</title>
+  <title>Sarah — Perfil Verificado</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -14,8 +14,6 @@
   <style>
     :root{
       --glass: rgba(0,0,0,0.48);
-      --accent-from: #ff4d9d;
-      --accent-to: #ff8a3d;
     }
     html,body{height:100%}
     body{
@@ -32,20 +30,22 @@
       z-index:-10;
       width:100%;
       height:100%;
+      /* MANTENDO SEU LINK S3 DO HTML 1 */
       background-image: url('https://s3.meucanalvip.org/sarinhaperfeita/fotopresell.jpeg');
       background-size:cover;
       background-position:center;
       transition: filter 1s ease, transform 14s linear;
     }
     .video-bg.zoom { transform: scale(1.1); filter: blur(4px); }
-    .overlay{ position:fixed; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.8)); z-index:-5; }
+    .overlay{ position:fixed; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.9)); z-index:-5; }
 
     .card {
       background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(15px);
+      backdrop-filter: blur(20px);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 24px;
       padding: 24px;
+      box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
     }
 
     .quiz-step { display: none; }
@@ -65,9 +65,20 @@
       border: 1px solid rgba(255,255,255,0.2);
       font-weight: 600;
       transition: all 0.2s;
-      text-align: left;
+      text-align: center; /* Centralizei para ficar igual botões de Sim/Não */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
     }
     .btn-quiz:active { transform: scale(0.98); background: rgba(255,255,255,0.2); }
+    
+    /* Estilo para botão de destaque */
+    .btn-primary {
+      background: linear-gradient(90deg, #ec4899, #f97316); 
+      border: none;
+      color: white;
+    }
 
     .pulse-cta { animation: pulse 1.6s infinite; }
     @keyframes pulse {
@@ -104,46 +115,55 @@
         
         <div id="step-1" class="quiz-step active">
           <div class="text-center mb-6">
-            <img src="https://s3.meucanalvip.org/sarinhaperfeita/fotopresell.jpeg" class="w-20 h-20 rounded-full mx-auto border-2 border-pink-500 mb-4 object-cover">
-            <h2 class="text-xl font-bold">Antes de começarmos...</h2>
-            <p class="text-sm text-white/70">Você é maior de 18 anos?</p>
+            <img src="https://s3.meucanalvip.org/sarinhaperfeita/fotopresell.jpeg" class="w-24 h-24 rounded-full mx-auto border-4 border-white/20 shadow-xl mb-4 object-cover">
+            
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <span class="relative flex h-3 w-3">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                </span>
+                <span class="text-xs font-bold text-green-400 uppercase tracking-wide">Online Agora</span>
+            </div>
+
+            <h2 class="text-lg font-bold leading-snug">Sarah está online agora, vamos conversar no WhatsApp?</h2>
           </div>
-          <button class="btn-quiz" onclick="nextStep(2)">🔞 Sim, eu sou maior de idade</button>
-          <button class="btn-quiz" onclick="alert('Desculpe, apenas para maiores.')">Não</button>
-        </div>
+          <button class="btn-quiz btn-primary" onclick="nextStep(2)">Sim 😈</button>
+          <button class="btn-quiz" onclick="nextStep(2)">Não</button> </div>
 
         <div id="step-2" class="quiz-step">
-          <div class="mb-6">
-            <h2 class="text-xl font-bold text-center">O que você mais gosta?</h2>
-            <p class="text-sm text-white/70 text-center">Quero saber seu estilo rs</p>
+          <div class="mb-6 text-center">
+            <h2 class="text-xl font-bold mb-2">Uma pergunta rápida...</h2>
+            <p class="text-white/80 text-lg">Eu realmente respondo, mas não gosto de perder tempo atoa. Você vai me dar atenção?</p>
           </div>
-          <button class="btn-quiz" onclick="nextStep(3)">😇 Mulheres com carinha de anjo</button>
-          <button class="btn-quiz" onclick="nextStep(3)">🔥 Mulheres bem safadas</button>
-          <button class="btn-quiz" onclick="nextStep(3)">😈 As duas coisas (meu caso)</button>
+          <button class="btn-quiz btn-primary" onclick="nextStep(3)">Sim, prometo! ❤️</button>
+          <button class="btn-quiz" onclick="nextStep(3)">Com certeza</button>
         </div>
 
         <div id="step-3" class="quiz-step">
           <div class="mb-6 text-center">
-            <h2 class="text-xl font-bold italic">"Tô recomeçando do zero..."</h2>
-            <p class="mt-2 text-sm text-white/80">Estou morando sozinha e as contas apertaram. Se eu te der acesso ao meu mundo privado por apenas <b>R$ 10</b>, você me daria essa força?</p>
+            <h2 class="text-xl font-bold text-pink-500 italic mb-3">Última etapa...</h2>
+            <p class="text-white/90 text-lg font-medium">Eu quero te mostrar umas coisinhas 🔞😈, posso? 😏</p>
           </div>
-          <button class="btn-quiz bg-green-500/20 border-green-500/50" onclick="nextStep(4)">✅ Sim! Quero ajudar e te ver</button>
-          <button class="btn-quiz" onclick="nextStep(4)">Quero só conversar primeiro</button>
+          <button class="btn-quiz btn-primary" onclick="nextStep(4)">Pode sim! 🔥</button>
+          <button class="btn-quiz" onclick="nextStep(4)">Quero ver tudo</button>
         </div>
 
         <div id="step-4" class="quiz-step">
-          <div class="flex items-center gap-4 mb-6">
+          <div class="flex items-center gap-4 mb-4 bg-white/5 p-3 rounded-xl border border-white/10">
             <img src="https://s3.meucanalvip.org/sarinhaperfeita/fotopresell.jpeg" class="w-16 h-16 rounded-full border-2 border-green-400 object-cover">
             <div>
-              <div class="text-xs text-green-400 flex items-center gap-1">
-                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Online agora
+              <div class="text-xs text-green-400 flex items-center gap-1 mb-1">
+                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Sarah Hadassa
               </div>
-              <div class="text-lg font-bold">Sarah Hadassa</div>
-              <div class="text-xs text-white/60">Brasília, 24 anos</div>
+              <div id="location-display" class="text-sm font-bold text-white/90">
+                 Calculando distância...
+              </div>
             </div>
           </div>
           
-          <p class="text-sm text-white/80 mb-6">Amei suas respostas! Já vi que a gente vai se dar muito bem... Me chama no WhatsApp agora pra eu te mandar o que prometi? 🔥</p>
+          <p class="text-sm text-white/70 mb-6 text-center">
+            Amei suas respostas! Já vi que a gente vai se dar muito bem... Me chama no WhatsApp agora pra eu te mandar o que prometi? 🔥
+          </p>
 
           <button id="sim-btn" class="w-full py-4 rounded-xl font-extrabold text-lg shadow-xl pulse-cta bg-gradient-to-r from-pink-500 to-orange-500 border-none" onclick="redirectToRandomWhatsapp()">
             ABRIR CONVERSA PRIVADA
@@ -161,28 +181,48 @@
   <div class="hidden md:flex min-h-screen bg-black text-white items-center justify-center p-6 text-center">
     <div class="card max-w-md">
       <h2 class="text-2xl font-bold mb-4">Acesse pelo Celular</h2>
-      <p class="text-white/60 mb-6">O conteúdo da Sarah é otimizado para dispositivos móveis. Escaneie o código ou use o link oficial.</p>
+      <p class="text-white/60 mb-6">O conteúdo da Sarah é otimizado para dispositivos móveis.</p>
       <div id="qr-container" class="bg-white p-4 rounded-xl inline-block mb-4">
         <img id="qr-img" src="" width="150">
       </div>
-      <p class="text-xs text-white/40">wa.me/5519984055903</p>
     </div>
   </div>
 
   <script>
-    const whatsappList = [
-      { number: '556183200152', weight: 1 }
+    // --- DADOS E LÓGICA ---
+    
+    // MENSAGENS ALEATÓRIAS (DO HTML 2)
+    const messages = [
+        'Oi quero ver seus conteudos', 'Oi gata quero ver seus conteudos',
+        'Oi gatinha quero ver seus conteudos', 'Oi anjo quero ver seus conteudos',
+        'Oi me mostra seus conteudos', 'Oi tudo bem?', 'Oi vamos conversar?',
+        'Oi tudo joia?', 'Oi tudo bom?', 'Oi quero comprar seus conteudos',
+        'Oi podemos conversar?', 'Oi quero te conhecer'
     ];
-    const fixedMessage = 'Oi amor,Quero ver seus conteudos';
+    
+    // NÚMERO DO WHATSAPP (DO HTML 1)
+    const whatsappNumber = '556183200152'; 
 
     function nextStep(step) {
       document.querySelectorAll('.quiz-step').forEach(el => el.classList.remove('active'));
       document.getElementById('step-' + step).classList.add('active');
       
-      // Zoom effect no background conforme avança
+      // Zoom effect no background na última etapa
       if(step === 4) {
         document.getElementById('bgImage').classList.add('zoom');
+        generateLocation(); // Gera a localização quando chega na etapa final
       }
+    }
+
+    // Lógica de Localização (DO HTML 2)
+    function generateLocation() {
+        const minKm = 5;
+        const maxKm = 31;
+        const randomKm = Math.floor(Math.random() * (maxKm - minKm + 1)) + minKm;
+        
+        // Injeta o texto no elemento
+        const locDisplay = document.getElementById('location-display');
+        locDisplay.innerHTML = `📍 Perto de você! Na sua região, a somente <span class="text-green-400">${randomKm} km</span> disponível para conversar.`;
     }
 
     function redirectToRandomWhatsapp() {
@@ -190,8 +230,11 @@
       btn.disabled = true;
       btn.textContent = 'Chamando...';
 
-      const phone = whatsappList[0].number;
-      const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(fixedMessage)}`;
+      // Sorteia mensagem (Do HTML 2)
+      const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+      
+      // Monta URL
+      const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(randomMessage)}`;
 
       if (typeof fbq === 'function') {
         fbq('track', 'Lead');
@@ -201,15 +244,17 @@
       }
     }
 
-    // QR Code Desktop
+    // QR Code Desktop (Lógica extra)
     const qrImg = document.getElementById('qr-img');
     if(qrImg) {
-      const waUrl = `https://wa.me/${whatsappList[0].number}?text=${encodeURIComponent(fixedMessage)}`;
+      const msgFixa = messages[0];
+      const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msgFixa)}`;
       qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(waUrl)}&choe=UTF-8`;
     }
   </script>
 </body>
 </html>
+
 
 
 
